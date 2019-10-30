@@ -28,4 +28,15 @@ class MongoController
         $dm->flush();
         return new JsonResponse(array('Status' => 'OK'));
     }
+
+    /**
+     * @Route("/get-user", methods={"GET"})
+     * @param DocumentManager $dm
+     * @return void
+     */
+    public function getUser(DocumentManager $dm)
+    {
+        $users = $dm->getRepository(User::class)->findAll();
+        dump($users);die;
+    }
 }

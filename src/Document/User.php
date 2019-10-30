@@ -3,6 +3,7 @@
 namespace App\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+
 /**
  * @MongoDB\Document
  */
@@ -39,19 +40,16 @@ class User
     protected $creation_date;
 
     /**
+     * @MongoDB\ReferenceMany(targetDocument="App\Document\Product", mappedBy="user")
+     */
+    private $products;
+
+    /**
      * @return mixed
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id): void
-    {
-        $this->id = $id;
     }
 
     /**
@@ -133,5 +131,22 @@ class User
     {
         $this->creation_date = $creation_date;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    /**
+     * @param mixed $products
+     */
+    public function setProducts($products): void
+    {
+        $this->products = $products;
+    }
+
 
 }
