@@ -3,11 +3,12 @@
 namespace App\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @MongoDB\Document
  */
-class User
+class User implements UserInterface
 {
     /**
      * @MongoDB\Id
@@ -43,6 +44,11 @@ class User
      * @MongoDB\ReferenceMany(targetDocument="App\Document\Product", mappedBy="user")
      */
     private $products;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    private $username;
 
     /**
      * @return mixed
@@ -148,5 +154,33 @@ class User
         $this->products = $products;
     }
 
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username): void
+    {
+        $this->username = $username;
+    }
 
+
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function getSalt()
+    {
+        // you *may* need a real salt depending on your encoder
+        // see section on salt below
+        return null;
+    }
+
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+    public function eraseCredentials()
+    {
+    }
 }
