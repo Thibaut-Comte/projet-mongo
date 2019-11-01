@@ -26,7 +26,7 @@ class Comment
     private $user;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="App\Document\Product", mappedBy="category")
+     * @MongoDB\ReferenceOne(targetDocument="App\Document\Product")
      */
     private $product;
 

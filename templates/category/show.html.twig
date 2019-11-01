@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% set token = csrf_token('delete_category') %}
+    <h1>{{ category.name }}</h1>
+
+
+    Produits associés : <br>
+    <ul>
+        {% for product in category.products %}
+            <li>
+                {{ product.name }}
+            </li>
+        {% else %}
+            Aucun produit associé
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('app_category_all') }}">Toutes les catégories</a>
+
+    <a href="{{ path('app_category_update', {'id': category.id}) }}"
+       class="btn btn-danger">Modifier</a>
+    <a href="{{ path('app_category_delete', {'id': category.id, 'token': token}) }}"
+       class="btn btn-danger">Supprimer</a>
+
+{% endblock %}

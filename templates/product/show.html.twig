@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>{{ product.name }}</h1>
+
+
+
+    {% set token = csrf_token('delete_product') %}
+    {% set tokenComment = csrf_token('delete_comment') %}
+
+    Price : {{ product.price }} €<br>
+    City : {{ product.city }} <br>
+    Category : {{ product.category.name }} <br>
+    Owner : {{ product.user.firstName }} {{ product.user.lastName }}
+
+    <br>
+
+    <ul>
+        {% for comment in product.comments %}
+            <li>
+                {{ comment.user.firstName }} <br>
+                {{ comment.comment }}
+            </li>
+            {% if app.user == comment.user %}
+                <a href="{{ path('app_comment_delete', {'commentId': comment.id, 'productId': product.id, 'token': tokenComment}) }}">Supprimer</a>
+            {% endif %}
+        {% else %}
+            <li>Aucun commentaires</li>
+        {% endfor %}
+    </ul>
+
+    <br>
+
+    {{ form_start(form) }}
+    {{ form_row(form) }}
+    <button type="submit">Commenter</button>
+    {{ form_end(form) }}
+
+    <br>
+
+    <a href="{{ path('app_product_all') }}" class="btn btn-primary">Tous les produits</a>
+
+    {% if product.user == app.user %}
+        <a href="{{ path('app_product_update', {'id': product.id}) }}" class="btn btn-danger">Modifier</a>
+        <a href="{{ path('app_product_delete', {'id': product.id, 'token': token}) }}"
+           class="btn btn-danger">Supprimer</a>
+    {% endif %}
+{% endblock %}

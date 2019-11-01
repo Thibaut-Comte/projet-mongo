@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Tous les produits</h1>
+
+    {% for product in products %}
+        <a href="{{ path('app_product_show', {'id':product.id}) }}">{{ product.name }}</a> - {{ product.price }} €
+    {% endfor %}
+
+    <br>
+    <a href="{{ path('app_product_create') }}">Ajouter un produit</a>
+
+{% endblock %}
