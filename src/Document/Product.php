@@ -6,7 +6,7 @@ namespace App\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
 /**
- * @MongoDB\Document
+ * @MongoDB\Document(repositoryClass=App\Repository\ProductRepository::class)
  */
 class Product
 {
@@ -39,6 +39,11 @@ class Product
      * @MongoDB\Field(type="string")
      */
     private $description;
+
+    /**
+     * @MongoDB\Field(type="string")
+     */
+    private $imageFilename;
 
     /**
      * @MongoDB\ReferenceMany(targetDocument="App\Document\Comment", mappedBy="product")
@@ -189,6 +194,22 @@ class Product
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImageFilename()
+    {
+        return $this->imageFilename;
+    }
+
+    /**
+     * @param mixed $imageFilename
+     */
+    public function setImageFilename($imageFilename): void
+    {
+        $this->imageFilename = $imageFilename;
     }
 
 }

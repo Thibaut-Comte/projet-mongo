@@ -51,6 +51,26 @@ class User implements UserInterface
     private $username;
 
     /**
+     * @MongoDB\Field(type="string")
+     */
+    private $roles = [];
+
+    public function getRoles()
+    {
+        $roles = $this->roles;
+
+        return [$roles];
+    }
+
+    /**
+     * @param $roles
+     */
+    public function setRoles($roles): void
+    {
+        $this->roles = $roles;
+    }
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -173,11 +193,6 @@ class User implements UserInterface
         // you *may* need a real salt depending on your encoder
         // see section on salt below
         return null;
-    }
-
-    public function getRoles()
-    {
-        return array('ROLE_USER');
     }
 
     public function eraseCredentials()

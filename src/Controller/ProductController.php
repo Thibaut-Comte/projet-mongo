@@ -14,48 +14,77 @@ use App\Document\Comment;
 use App\Document\Product;
 use App\Form\CommentType;
 use App\Form\ProductType;
+use App\Service\FileUploader;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
 
+/**
+ * Class ProductController
+ * @package App\Controller
+ * @Route("/product")
+ */
 class ProductController extends AbstractController
 {
 
     /**
      * @Route("/")
      * @param DocumentManager $dm
+     * @param PaginatorInterface $paginator
+     * @param Request $request
      * @return Response
      */
-    public function all(DocumentManager $dm)
+    public function all(DocumentManager $dm, PaginatorInterface $paginator, Request $request)
     {
-        $products = $dm->getRepository(Product::class)->findAll();
+        $categories = $dm->getRepository(Category::class)->findAll();
+        $category = null;
+        if ($request->query->get('category')) {
+            $category = $dm->getRepository(Category::class)->findOneBy(['id' => $request->query->get('category')]);
+        }
+        $queryBuilder = $dm->getRepository(Product::class)->findAllByCategory($category);
 
+        $pagination = $paginator->paginate(
+            $queryBuilder, /* query NOT result */
+            $request->query->getInt('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
 
         return $this->render('product/index.html.twig', array(
-            'products' => $products
+            'pagination' => $pagination, 'categories' => $categories
         ));
     }
 
     /**
      * @Route("/add")
      * @param DocumentManager $dm
+     * @param Request $request
+     * @param FileUploader $fileUploader
      * @return Response
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
-    public function create(DocumentManager $dm, Request $request)
+    public function create(DocumentManager $dm, Request $request, FileUploader $fileUploader)
     {
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid())
-        {
-            $date = new DateTime();
+        if ($form->isSubmitted() && $form->isValid()) {
+//            $date = new DateTime();
 //            $product->setDateInsert($date);
+            $imageFile = $form['image']->getData();
+            if ($imageFile) {
+                $imageFileName = $fileUploader->upload($imageFile);
+                $product->setImageFilename($imageFileName);
+            }
+
             $product->setUser($this->getUser());
             $category = $dm->getRepository(Category::class)->find($request->request->get('product')['category']);
             $category->addProduct($product);
@@ -73,9 +102,11 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/{id}", methods={"GET", "POST"})
-     * @param Product $product
+     * @param DocumentManager $dm
+     * @param $id
+     * @param Request $request
      * @return Response
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
     public function show(DocumentManager $dm, $id, Request $request): Response
     {
@@ -85,8 +116,7 @@ class ProductController extends AbstractController
 
         $form = $this->createForm(CommentType::class, $comment)->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $comment->setUser($this->getUser());
             $comment->setProduct($product);
             $dm->persist($comment);
@@ -108,8 +138,8 @@ class ProductController extends AbstractController
      * @param Request $request
      * @param $id
      * @param DocumentManager $dm
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @return RedirectResponse|AccessDeniedException
+     * @throws MongoDBException
      */
     public function delete(Request $request, $id, DocumentManager $dm)
     {
@@ -130,8 +160,8 @@ class ProductController extends AbstractController
      * @param $id
      * @param DocumentManager $dm
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @return RedirectResponse|Response
+     * @throws MongoDBException
      */
     public function update($id, DocumentManager $dm, Request $request)
     {
@@ -140,8 +170,7 @@ class ProductController extends AbstractController
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $dm->flush();
             return $this->redirectToRoute('app_product_show', array(
                 'id' => $product->getId()

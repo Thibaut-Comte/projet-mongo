@@ -2,9 +2,16 @@
 
 {% block body %}
     {{ form_start(form) }}
-    {{ form_row(form) }}
-    <button type="submit">Submit</button>
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.price) }}
+    {{ form_row(form.category) }}
+    {{ form_row(form.city) }}
+    {{ form_row(form.image) }}
+    {{ form_row(form.description) }}
+
+    <button class="btn btn-primary btn-block" type="submit">{{ 'submit'|trans }}</button>
     {{ form_end(form) }}
 
-    <a href="{{ path('app_product_all') }}">Les produits</a>
+    {#    <a href="{{ path('app_product_all') }}">Les produits</a>#}
 {% endblock %}

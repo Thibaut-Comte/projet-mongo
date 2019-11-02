@@ -1,0 +1,17 @@
+title:
+    product: 'Produit'
+    product_add: 'Ajouté un produit'
+    category: 'Catégories'
+    profile: 'Profil'
+submit: 'Envoyer'
+
+product:
+    name: 'Nom du produit'
+    price: 'Prix (EUR)'
+    category: 'Catégorie'
+    city: 'Ville'
+    description: 'Description'
+    image: 'Image'
+
+label_previous: Précédent
+label_next: Suivant

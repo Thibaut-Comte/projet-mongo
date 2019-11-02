@@ -2,13 +2,79 @@
 
 {% block body %}
 
-    <h1>Tous les produits</h1>
+    <h1>Produits</h1>
+    <div class="row">
+        <div>
+            <select class="form-control" name="category" id="category">
+                <option value="">-- Choisir un catégorie --</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id == app.request.get('category') %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-    {% for product in products %}
-        <a href="{{ path('app_product_show', {'id':product.id}) }}">{{ product.name }}</a> - {{ product.price }} €
-    {% endfor %}
+        {% for product in pagination %}
+            <div class="col-12 border my-2 p-2">
+                <a href="{{ path('app_product_show', {'id':product.id}) }}">
+                    <div class="row">
+                        <div class="col-5">
+                            {% if product.imageFilename %}
+                                {% if asset('uploads/image/' ~ product.imageFilename)|file_exists %}
+                                    <img src="{{ asset('uploads/image/' ~ product.imageFilename) }}"
+                                         alt="{{ product.name }}"
+                                         width="400">
+                                {% else %}
+                                    <img src="{{ product.imageFilename }}"
+                                         alt="{{ product.name }}">
+                                {% endif %}
+                            {% else %}
+                                <img src="https://via.placeholder.com/400x250" alt="default">
+                            {% endif %}
+                        </div>
+                        <div class="col-7">
+                            <h5>{{ product.name }}</h5>
+                            <p class="lead text-danger">{{ product.price }} €</p>
+                            <br>
+                            <p class="lead text-warning">
+                                {{ product.category.name }}
+                            </p>
+                            <p class="lead">
+                                {{ product.city }}
+                                <br>
+                                {{ product.dateInsert|date('d/m/Y H:i') }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% else %}
+            Aucun élément
+        {% endfor %}
+
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+    {#    <ul>#}
+    {#        {% for product in products %}#}
+    {#            <li>#}
+    {#                <img src="{{ asset('uploads/image/' ~ product.imageFilename) }}" alt="{{ product.name }}" width="400">#}
+    {#                <a href="{{ path('app_product_show', {'id':product.id}) }}">{{ product.name }}</a> - {{ product.price }}#}
+    {#                €#}
+    {#            </li>#}
+    {#        {% endfor %}#}
+    {#    </ul>#}
 
     <br>
-    <a href="{{ path('app_product_create') }}">Ajouter un produit</a>
+    {#    <a href="{{ path('app_product_create') }}">Ajouter un produit</a>#}
+
+    <script>
+        const select = document.getElementById('category');
+        select.addEventListener('change', e => {
+            let url = '{{ path('app_product_all', {'category': '0'}) }}';
+            url = url.replace('0', e.target.value);
+            window.location.replace(url);
+        })
+    </script>
 
 {% endblock %}
