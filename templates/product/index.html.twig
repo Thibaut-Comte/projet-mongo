@@ -3,6 +3,9 @@
 {% block body %}
 
     <h1>Produits</h1>
+    <div class="count">
+        {{ pagination.getTotalItemCount }} produit(s)
+    </div>
     <div class="row">
         <div>
             <form class="form-inline my-2 my-lg-0" method="get" action="{{ path('app_product_all') }}">
@@ -62,7 +65,9 @@
                 </a>
             </div>
         {% else %}
-            Aucun élément
+            <div class="col-12 border my-2 p-2">
+                Aucun élément
+            </div>
         {% endfor %}
 
         <div class="navigation">
