@@ -157,7 +157,7 @@ class Product
     }
 
     /**
-     * @return mixed
+     * @return User
      */
     public function getUser()
     {

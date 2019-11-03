@@ -5,12 +5,23 @@
     <h1>Produits</h1>
     <div class="row">
         <div>
-            <select class="form-control" name="category" id="category">
-                <option value="">-- Choisir un catégorie --</option>
-                {% for category in categories %}
-                    <option value="{{ category.id }}" {% if category.id == app.request.get('category') %}selected{% endif %}>{{ category.name }}</option>
-                {% endfor %}
-            </select>
+            <form class="form-inline my-2 my-lg-0" method="get" action="{{ path('app_product_all') }}">
+                <input class="form-control mr-sm-2" name="search" type="text" placeholder="Recherche">
+                <div class="col-auto my-1">
+                    <div class="custom-control custom-checkbox mr-sm-2">
+                        <input type="checkbox" class="custom-control-input" id="customControlAutosizing" name="onlyTitle">
+                        <label class="custom-control-label" for="customControlAutosizing">Rechercher uniquement dans le titre</label>
+                    </div>
+                </div>
+                <select class="form-control" name="category" id="category">
+                    <option value="">-- Choisir un catégorie --</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}"
+                                {% if category.id == app.request.get('category') %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-secondary mx-2" type="submit">Rechercher</button>
+            </form>
         </div>
 
         {% for product in pagination %}
@@ -55,26 +66,14 @@
             {{ knp_pagination_render(pagination) }}
         </div>
     </div>
-    {#    <ul>#}
-    {#        {% for product in products %}#}
-    {#            <li>#}
-    {#                <img src="{{ asset('uploads/image/' ~ product.imageFilename) }}" alt="{{ product.name }}" width="400">#}
-    {#                <a href="{{ path('app_product_show', {'id':product.id}) }}">{{ product.name }}</a> - {{ product.price }}#}
-    {#                €#}
-    {#            </li>#}
-    {#        {% endfor %}#}
-    {#    </ul>#}
 
-    <br>
-    {#    <a href="{{ path('app_product_create') }}">Ajouter un produit</a>#}
-
-    <script>
-        const select = document.getElementById('category');
-        select.addEventListener('change', e => {
-            let url = '{{ path('app_product_all', {'category': '0'}) }}';
-            url = url.replace('0', e.target.value);
-            window.location.replace(url);
-        })
-    </script>
+{#    <script>#}
+{#        const select = document.getElementById('category');#}
+{#        select.addEventListener('change', e => {#}
+{#            let url = '{{ path('app_product_all', {'category': '0'}) }}';#}
+{#            url = url.replace('0', e.target.value);#}
+{#            window.location.replace(url);#}
+{#        })#}
+{#    </script>#}
 
 {% endblock %}

@@ -14,6 +14,7 @@ use App\Document\Comment;
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
 use Doctrine\ODM\MongoDB\Types\CollectionType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,7 +23,12 @@ class CommentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('comment')
+            ->add('comment', TextType::class, array(
+                'label' => 'comment',
+                'attr' => array(
+                    'placeholder' => 'comment'
+                )
+            ))
         ;
     }
 

@@ -12,6 +12,7 @@ namespace App\Controller;
 use App\Document\Category;
 use App\Form\CategoryType;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,7 +29,25 @@ class CategoryController extends AbstractController
 {
 
     /**
+     * @Route("/")
+     * @param DocumentManager $dm
+     * @return Response
+     */
+    public function all(DocumentManager $dm)
+    {
+        $categories = $dm->getRepository(Category::class)->findAll();
+
+        return $this->render('category/index.html.twig', array(
+            'categories' => $categories
+        ));
+    }
+
+    /**
      * @Route("/add")
+     * @param DocumentManager $dm
+     * @param Request $request
+     * @return RedirectResponse|Response
+     * @throws MongoDBException
      */
     public function addAction(DocumentManager $dm, Request $request)
     {
@@ -49,22 +68,9 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/all")
-     * @param DocumentManager $dm
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function all(DocumentManager $dm)
-    {
-        $categories = $dm->getRepository(Category::class)->findAll();
-
-        return $this->render('category/index.html.twig', array(
-            'categories' => $categories
-        ));
-    }
-
-    /**
      * @Route("/{id}", methods={"GET"})
-     * @param Category $category
+     * @param DocumentManager $dm
+     * @param $id
      * @return Response
      */
     public function show(DocumentManager $dm, $id): Response
@@ -82,8 +88,9 @@ class CategoryController extends AbstractController
      * @Route("/{id}/delete")
      * @param Request $request
      * @param Id
+     * @param DocumentManager $dm
      * @return RedirectResponse|AccessDeniedException
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @throws MongoDBException
      */
     public function delete(Request $request, $id, DocumentManager $dm)
     {
@@ -102,6 +109,9 @@ class CategoryController extends AbstractController
      * @Route("update/{id}")
      * @param $id
      * @param DocumentManager $dm
+     * @param Request $request
+     * @return RedirectResponse|Response
+     * @throws MongoDBException
      */
     public function update($id, DocumentManager $dm, Request $request)
     {

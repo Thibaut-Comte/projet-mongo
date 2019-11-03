@@ -16,6 +16,7 @@ use App\Form\CommentType;
 use App\Form\ProductType;
 use App\Service\FileUploader;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Mapping\MappingException;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,8 +25,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Validator\Constraints\Date;
-use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class ProductController
@@ -46,10 +45,13 @@ class ProductController extends AbstractController
     {
         $categories = $dm->getRepository(Category::class)->findAll();
         $category = null;
+        $search = $request->query->get('search');
+        $onlyTitle = $request->query->get('onlyTitle');
         if ($request->query->get('category')) {
             $category = $dm->getRepository(Category::class)->findOneBy(['id' => $request->query->get('category')]);
         }
-        $queryBuilder = $dm->getRepository(Product::class)->findAllByCategory($category);
+
+        $queryBuilder = $dm->getRepository(Product::class)->findAllByCategoryAndSearch($category, $search, $onlyTitle);
 
         $pagination = $paginator->paginate(
             $queryBuilder, /* query NOT result */
@@ -107,6 +109,7 @@ class ProductController extends AbstractController
      * @param Request $request
      * @return Response
      * @throws MongoDBException
+     * @throws MappingException
      */
     public function show(DocumentManager $dm, $id, Request $request): Response
     {
@@ -140,6 +143,7 @@ class ProductController extends AbstractController
      * @param DocumentManager $dm
      * @return RedirectResponse|AccessDeniedException
      * @throws MongoDBException
+     * @throws MappingException
      */
     public function delete(Request $request, $id, DocumentManager $dm)
     {
@@ -162,6 +166,7 @@ class ProductController extends AbstractController
      * @param Request $request
      * @return RedirectResponse|Response
      * @throws MongoDBException
+     * @throws MappingException
      */
     public function update($id, DocumentManager $dm, Request $request)
     {

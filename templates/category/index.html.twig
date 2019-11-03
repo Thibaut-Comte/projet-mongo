@@ -4,8 +4,16 @@
 
     <h1>Toutes les catégories</h1>
 
-    {% for category in categories %}
-        <a href="{{ path('app_category_show', {'id': category.id }) }}">{{ category.name }}</a>
-    {% endfor %}
+    <ul class="list-group">
+        {% for category in categories %}
+            <a href="{{ path('app_category_show', {'id': category.id }) }}">
+                <li class="list-group-item">
+                    {{ category.name }}
+                </li>
+            </a>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('app_category_add') }}">Ajouter une catégorie</a>
 
 {% endblock %}

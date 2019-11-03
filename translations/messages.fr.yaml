@@ -12,6 +12,9 @@ product:
     city: 'Ville'
     description: 'Description'
     image: 'Image'
+    owner: 'Vendeur'
+
+comment: 'Commentaire'
 
 label_previous: Précédent
 label_next: Suivant

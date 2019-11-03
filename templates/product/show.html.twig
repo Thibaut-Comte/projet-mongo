@@ -2,17 +2,52 @@
 
 {% block body %}
 
-    <h1>{{ product.name }}</h1>
-
-
-
     {% set token = csrf_token('delete_product') %}
     {% set tokenComment = csrf_token('delete_comment') %}
 
-    Price : {{ product.price }} €<br>
-    City : {{ product.city }} <br>
-    Category : {{ product.category.name }} <br>
-    Owner : {{ product.user.firstName }} {{ product.user.lastName }}
+    <h1>{{ product.name }}</h1>
+
+    <div class="text-center my-3">
+        {% if product.imageFilename %}
+            {% if asset('uploads/image/' ~ product.imageFilename)|file_exists %}
+                <img src="{{ asset('uploads/image/' ~ product.imageFilename) }}"
+                     alt="{{ product.name }}"
+                     width="400">
+            {% else %}
+                <img src="{{ product.imageFilename }}"
+                     alt="{{ product.name }}">
+            {% endif %}
+        {% else %}
+            <img src="https://via.placeholder.com/400x250" alt="default">
+        {% endif %}
+    </div>
+
+    <table class="table">
+        <tr>
+            <td>{{ 'product.price'|trans }}</td>
+            <td>{{ product.price }} €</td>
+        </tr>
+        <tr>
+            <td>{{ 'product.city'|trans }}</td>
+            <td>{{ product.city }}</td>
+        </tr>
+        <tr>
+            <td>{{ 'product.category'|trans }}</td>
+            <td>{{ product.category.name }}</td>
+        </tr>
+        <tr>
+            <td>{{ 'product.owner'|trans }}</td>
+            <td>{{ product.user.firstName }} {{ product.user.lastName }}</td>
+        </tr>
+    </table>
+
+    <div class="jumbotron">
+        <p class="lead">
+            {{ product.description }}
+        </p>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" href="mailto:{{ product.user.email }}" role="button">Contacter le vendeur</a>
+    </div>
 
     <br>
 
@@ -26,23 +61,23 @@
                 <a href="{{ path('app_comment_delete', {'commentId': comment.id, 'productId': product.id, 'token': tokenComment}) }}">Supprimer</a>
             {% endif %}
         {% else %}
-            <li>Aucun commentaires</li>
+            <li>Aucun commentaire</li>
         {% endfor %}
     </ul>
 
     <br>
 
     {{ form_start(form) }}
-    {{ form_row(form) }}
-    <button type="submit">Commenter</button>
+    {{ form_row(form.comment) }}
+    <button class="btn btn-info" type="submit" {% if app.user == null %}disabled{% endif %}>Commenter</button>
     {{ form_end(form) }}
 
     <br>
 
-    <a href="{{ path('app_product_all') }}" class="btn btn-primary">Tous les produits</a>
+    <a href="{{ path('app_product_all') }}" class="btn btn-link">Retour à la liste</a>
 
     {% if product.user == app.user %}
-        <a href="{{ path('app_product_update', {'id': product.id}) }}" class="btn btn-danger">Modifier</a>
+        <a href="{{ path('app_product_update', {'id': product.id}) }}" class="btn btn-warning">Modifier</a>
         <a href="{{ path('app_product_delete', {'id': product.id, 'token': token}) }}"
            class="btn btn-danger">Supprimer</a>
     {% endif %}

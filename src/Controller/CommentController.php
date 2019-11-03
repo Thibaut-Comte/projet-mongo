@@ -11,9 +11,12 @@ namespace App\Controller;
 
 use App\Document\Comment;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @Route("/comment")
@@ -29,12 +32,14 @@ class CommentController extends AbstractController
      * @param $commentId
      * @param $productId
      * @param DocumentManager $dm
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @throws \Doctrine\ODM\MongoDB\MongoDBException
+     * @return RedirectResponse|AccessDeniedException
+     * @throws MongoDBException
      */
     public function delete(Request $request, $commentId, $productId, DocumentManager $dm)
     {
         $token = $request->query->get('token');
+        //TODO : Ne supprime pas pour moi
+
         if (!$this->isCsrfTokenValid('delete_comment', $token)) {
             return $this->createAccessDeniedException();
         }
