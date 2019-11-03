@@ -53,7 +53,7 @@ class AppFixtures extends Fixture
         $admin->setFirstname($faker->lastName);
         $admin->setLastname($faker->firstName);
         $admin->setPassword($this->encoder->encodePassword($admin, $admin->getUsername()));
-        $admin->setRoles('ROLE_ADMIN');
+        $admin->setRoles(['ROLE_ADMIN']);
 
         $this->documentManager->persist($admin);
         $this->documentManager->flush();
@@ -66,7 +66,7 @@ class AppFixtures extends Fixture
             $user->setFirstname($faker->lastName);
             $user->setLastname($faker->firstName);
             $user->setPassword($this->encoder->encodePassword($user, $user->getUsername()));
-            $user->setRoles('ROLE_USER');
+            $user->setRoles(['ROLE_USER']);
 
             $this->documentManager->persist($user);
             $this->documentManager->flush();
