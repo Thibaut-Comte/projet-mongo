@@ -6,11 +6,14 @@
     <div class="row">
         <div>
             <form class="form-inline my-2 my-lg-0" method="get" action="{{ path('app_product_all') }}">
-                <input class="form-control mr-sm-2" name="search" type="text" placeholder="Recherche">
+                <input class="form-control mr-sm-2" name="search" type="text" placeholder="Recherche"
+                       value="{{ app.request.get('search') }}">
                 <div class="col-auto my-1">
                     <div class="custom-control custom-checkbox mr-sm-2">
-                        <input type="checkbox" class="custom-control-input" id="customControlAutosizing" name="onlyTitle">
-                        <label class="custom-control-label" for="customControlAutosizing">Rechercher uniquement dans le titre</label>
+                        <input type="checkbox" class="custom-control-input" id="customControlAutosizing"
+                               name="onlyTitle" {% if app.request.get('onlyTitle') %}checked{% endif %}>
+                        <label class="custom-control-label" for="customControlAutosizing">Rechercher uniquement dans le
+                            titre</label>
                     </div>
                 </div>
                 <select class="form-control" name="category" id="category">
@@ -67,13 +70,13 @@
         </div>
     </div>
 
-{#    <script>#}
-{#        const select = document.getElementById('category');#}
-{#        select.addEventListener('change', e => {#}
-{#            let url = '{{ path('app_product_all', {'category': '0'}) }}';#}
-{#            url = url.replace('0', e.target.value);#}
-{#            window.location.replace(url);#}
-{#        })#}
-{#    </script>#}
+    {#    <script>#}
+    {#        const select = document.getElementById('category');#}
+    {#        select.addEventListener('change', e => {#}
+    {#            let url = '{{ path('app_product_all', {'category': '0'}) }}';#}
+    {#            url = url.replace('0', e.target.value);#}
+    {#            window.location.replace(url);#}
+    {#        })#}
+    {#    </script>#}
 
 {% endblock %}
