@@ -1,8 +1,11 @@
 title:
     product: 'Produit'
-    product_add: 'Ajouté un produit'
+    product_add: 'Ajouter un produit'
     category: 'Catégories'
     profile: 'Profil'
+    login: 'Se connecter'
+    logout: 'Se déconnecter'
+    signup: "S'inscrire"
 submit: 'Envoyer'
 
 product:

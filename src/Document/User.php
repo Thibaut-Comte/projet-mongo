@@ -46,14 +46,22 @@ class User implements UserInterface
     private $products;
 
     /**
+     * @MongoDB\Index(unique=true, order="asc")
      * @MongoDB\Field(type="string")
      */
     private $username;
 
     /**
-     * @MongoDB\Field(type="string")
+     * @MongoDB\Field(type="collection")
      */
     private $roles = [];
+
+    private $rawPassword;
+
+    public function __construct()
+    {
+        $this->roles = array('ROLE_USER');
+    }
 
     public function getRoles()
     {
@@ -197,5 +205,20 @@ class User implements UserInterface
 
     public function eraseCredentials()
     {
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getRawPassword(): ?string
+    {
+        return $this->rawPassword;
+    }
+    /**
+     * @param null|string $rawPassword
+     */
+    public function setRawPassword(?string $rawPassword): void
+    {
+        $this->rawPassword = $rawPassword;
     }
 }

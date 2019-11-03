@@ -67,10 +67,12 @@
 
     <br>
 
-    {{ form_start(form) }}
-    {{ form_row(form.comment) }}
-    <button class="btn btn-info" type="submit" {% if app.user == null %}disabled{% endif %}>Commenter</button>
-    {{ form_end(form) }}
+    {% if app.user %}
+        {{ form_start(form) }}
+        {{ form_row(form.comment) }}
+        <button class="btn btn-info" type="submit" {% if app.user == null %}disabled{% endif %}>Commenter</button>
+        {{ form_end(form) }}
+    {% endif %}
 
     <br>
 
